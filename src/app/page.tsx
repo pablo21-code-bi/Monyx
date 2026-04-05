@@ -28,10 +28,11 @@ export default function Home() {
 
   if (!user) {
     return (
-      <div className="p-6 md:p-10 max-w-6xl mx-auto flex flex-col items-center justify-center h-[80vh] text-center space-y-4">
-        <h1 className="text-3xl font-bold">Bem vindo ao Monyx</h1>
-        <p className="text-text-muted">Acesse seu perfil para criar ou conectar sua conta.</p>
-        <Link href="/perfil" className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-colors">
+      <div className="p-6 md:p-10 max-w-6xl mx-auto flex flex-col items-center justify-center h-[80vh] text-center space-y-6">
+        <img src="/monyx-logo.png" alt="Monyx Logo" className="w-24 h-24 object-contain shadow-2xl shadow-primary/20 rounded-3xl animate-bounce-subtle" />
+        <h1 className="text-4xl font-bold tracking-tight">Bem vindo ao Monyx</h1>
+        <p className="text-text-muted text-lg">Acesse seu perfil para criar ou conectar sua conta e gerenciar suas finanças.</p>
+        <Link href="/perfil" className="px-8 py-3.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/30">
           Ir para o Perfil
         </Link>
       </div>
@@ -175,9 +176,14 @@ export default function Home() {
                       <p className="font-semibold">{tx.title}</p>
                       <p className="text-xs text-text-muted mt-1 flex items-center gap-2">
                         {new Date(tx.created_at || tx.date).toLocaleDateString('pt-BR')} • {tx.category} 
-                        {partner && tx.user_cpf === partner.cpf && isCoupleView ? (
-                           <span className="bg-pink-500/10 text-pink-500 px-1.5 py-0.5 rounded-md font-medium">Parceiro</span>
-                        ) : ""}
+                        {tx.is_shared && (
+                          <span className="flex items-center gap-1 bg-pink-500/10 text-pink-500 px-1.5 py-0.5 rounded-md font-medium">
+                            <Users size={12} /> Casal
+                          </span>
+                        )}
+                        {partner && tx.user_cpf === partner.cpf && (
+                           <span className="bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded-md font-medium">Parceiro</span>
+                        )}
                       </p>
                     </div>
                   </div>

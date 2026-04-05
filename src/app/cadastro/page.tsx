@@ -85,6 +85,9 @@ export default function Cadastro() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background py-10">
       <div className="w-full max-w-md bg-surface border border-surface-border p-8 rounded-2xl shadow-xl animate-in fade-in zoom-in-95 duration-500">
+        <div className="flex justify-center mb-6">
+          <img src="/monyx-logo.png" alt="Monyx Logo" className="w-16 h-16 object-contain shadow-lg shadow-primary/20 rounded-2xl" />
+        </div>
         <h1 className="text-2xl font-bold text-center mb-2">Criar nova conta</h1>
         <p className="text-text-muted text-center mb-8">Preencha seus dados para começar.</p>
 

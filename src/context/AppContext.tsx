@@ -20,6 +20,7 @@ export type Transaction = {
   amount: number;
   type: "income" | "expense";
   category: string;
+  is_shared: boolean;
   date: string;
   created_at?: string;
 };
@@ -88,14 +89,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   
   const router = useRouter();
 
-  // A união baseada no estado de visão (Fácil de consumir nas telas)
+  // A união baseada no estado de visão (Totalmente Separadas)
   const activeTransactions = isCoupleView && partner 
-    ? [...transactions, ...partnerTransactions] 
-    : transactions;
+    ? [...transactions, ...partnerTransactions].filter(t => t.is_shared) 
+    : transactions.filter(t => !t.is_shared);
 
   const activeGoals = isCoupleView && partner
-    ? goals
-    : goals.filter(g => g.user_cpf === user?.cpf);
+    ? goals.filter(g => g.is_shared)
+    : goals.filter(g => g.user_cpf === user?.cpf && !g.is_shared);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {

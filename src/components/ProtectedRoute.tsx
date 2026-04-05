@@ -41,7 +41,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   return (
     <>
       <Navigation />
-      <main className="flex-1 h-screen overflow-y-auto w-full pb-20 md:pb-0">
+      <main className="flex-1 h-screen overflow-y-auto w-full pt-16 md:pt-0 pb-20 md:pb-0">
         {children}
       </main>
     </>

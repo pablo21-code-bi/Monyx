@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpCircle, ArrowDownCircle, Search, Filter } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, Search, Filter, Users } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 
 export default function Registros() {
@@ -63,12 +63,17 @@ export default function Registros() {
               </div>
               <div>
                 <p className="font-semibold text-base">{tx.title}</p>
-                <div className="flex items-center gap-2 text-xs text-text-muted mt-1">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-text-muted mt-1">
                   <span>{new Date(tx.created_at || tx.date).toLocaleDateString("pt-BR")}</span>
                   <span>•</span>
                   <span className="bg-surface-border/50 px-2 py-0.5 rounded-full">{tx.category}</span>
+                  {tx.is_shared && (
+                     <span className="bg-pink-500/10 text-pink-500 font-medium px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Users size={12} /> Casal
+                     </span>
+                  )}
                   {partner && tx.user_cpf === partner.cpf && (
-                     <span className="bg-pink-500/10 text-pink-500 font-medium px-2 py-0.5 rounded-full ml-1">Parceiro</span>
+                     <span className="bg-indigo-500/10 text-indigo-500 font-medium px-2 py-0.5 rounded-full">Parceiro</span>
                   )}
                 </div>
               </div>

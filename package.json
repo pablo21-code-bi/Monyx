@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "set DEPLOY_ENV=github&& next build && node -e \"require('fs').writeFileSync('out/.nojekyll', '')\" && gh-pages -d out -t true"
+    "deploy": "set DEPLOY_ENV=github&& next build && node -e \"require('fs').writeFileSync('out/.nojekyll', '')\" && node -e \"require('fs').copyFileSync('out/index.html', 'out/404.html')\" && gh-pages -d out -t"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
