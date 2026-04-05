@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { X, ArrowUpCircle, ArrowDownCircle, Users, User } from "lucide-react";
-import { useAppContext } from "@/context/AppContext";
+import { useState, useEffect } from "react";
+import { X, ArrowUpCircle, ArrowDownCircle, Users, User, Trash2, AlertCircle } from "lucide-react";
+import { useAppContext, Transaction } from "@/context/AppContext";
 
 interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  transactionToEdit?: Transaction | null;
 }
 
-export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
-  const { addTransaction, partner } = useAppContext();
+export default function TransactionModal({ isOpen, onClose, transactionToEdit }: TransactionModalProps) {
+  const { addTransaction, updateTransaction, deleteTransaction, partner } = useAppContext();
   
   const [type, setType] = useState<"income" | "expense">("expense");
   const [amount, setAmount] = useState("");
@@ -18,6 +19,27 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const [category, setCategory] = useState("Alimentação");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isShared, setIsShared] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (transactionToEdit) {
+      setType(transactionToEdit.type);
+      setAmount(transactionToEdit.amount.toString().replace(".", ","));
+      setDescription(transactionToEdit.title);
+      setCategory(transactionToEdit.category);
+      setDate(new Date(transactionToEdit.date).toISOString().split("T")[0]);
+      setIsShared(transactionToEdit.is_shared);
+      setIsDeleting(false);
+    } else {
+      setType("expense");
+      setAmount("");
+      setDescription("");
+      setCategory("Alimentação");
+      setDate(new Date().toISOString().split("T")[0]);
+      setIsShared(false);
+      setIsDeleting(false);
+    }
+  }, [transactionToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -27,27 +49,46 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     const numericAmount = parseFloat(amount.replace(",", "."));
     if (isNaN(numericAmount) || numericAmount <= 0) return;
 
-    await addTransaction({
-      title: description || (type === "income" ? "Receita" : "Despesa"),
-      amount: numericAmount,
-      type,
-      category,
-      date,
-      is_shared: isShared
-    });
+    if (transactionToEdit) {
+      await updateTransaction(transactionToEdit.id, {
+        title: description,
+        amount: numericAmount,
+        type,
+        category,
+        date,
+        is_shared: isShared
+      });
+    } else {
+      await addTransaction({
+        title: description || (type === "income" ? "Receita" : "Despesa"),
+        amount: numericAmount,
+        type,
+        category,
+        date,
+        is_shared: isShared
+      });
+    }
 
-    // Reset form
-    setAmount("");
-    setDescription("");
-    setIsShared(false);
     onClose();
+  };
+
+  const handleDelete = async () => {
+    if (transactionToEdit) {
+      await deleteTransaction(transactionToEdit.id);
+      onClose();
+    }
   };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full md:w-[480px] bg-surface md:rounded-3xl rounded-t-3xl p-6 md:p-8 shadow-2xl animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-4 duration-300">
         <header className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Nova Movimentação</h2>
+          <div className="flex flex-col">
+            <h2 className="text-2xl font-bold">{transactionToEdit ? 'Editar' : 'Nova'} Movimentação</h2>
+            {transactionToEdit && (
+              <span className="text-xs text-text-muted mt-0.5">Editando registro existente</span>
+            )}
+          </div>
           <button 
             onClick={onClose}
             className="p-2 hover:bg-surface-border/50 rounded-full transition-colors text-text-muted"
@@ -183,12 +224,46 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
             </div>
           )}
 
-          <button 
-            type="submit"
-            className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-bold text-lg mt-4 shadow-lg shadow-primary/30 transition-all"
-          >
-            Adicionar {type === "income" ? "Receita" : "Despesa"}
-          </button>
+          <div className="flex gap-3 mt-6">
+            {transactionToEdit && (
+              <div className="flex-1 dropdown relative">
+                {isDeleting ? (
+                  <div className="flex gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => setIsDeleting(false)}
+                      className="flex-1 bg-surface border border-surface-border text-sm font-bold py-4 rounded-xl hover:bg-background transition-all"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={handleDelete}
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-4 rounded-xl transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                    >
+                      Confirmar
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    type="button"
+                    onClick={() => setIsDeleting(true)}
+                    className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Trash2 size={18} />
+                    Excluir
+                  </button>
+                )}
+              </div>
+            )}
+            
+            <button 
+              type="submit"
+              className={`flex-[2] bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/30 transition-all`}
+            >
+              {transactionToEdit ? 'Salvar Alterações' : `Adicionar ${type === "income" ? "Receita" : "Despesa"}`}
+            </button>
+          </div>
         </form>
       </div>
     </div>

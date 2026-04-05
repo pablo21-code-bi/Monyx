@@ -1,9 +1,9 @@
 "use client";
 
-import { Wallet, ArrowUpCircle, ArrowDownCircle, Plus, Users, BellRing, Check, X } from "lucide-react";
+import { Wallet, ArrowUpCircle, ArrowDownCircle, Plus, Users, BellRing, Check, X, Pencil } from "lucide-react";
 import { useState } from "react";
 import TransactionModal from "@/components/TransactionModal";
-import { useAppContext } from "@/context/AppContext";
+import { useAppContext, Transaction } from "@/context/AppContext";
 import Link from "next/link";
 import LandingNavbar from "@/components/LandingNavbar";
 
@@ -14,6 +14,7 @@ export default function Home() {
   } = useAppContext();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   // Calcula resumo usando O ARRAY DINÂMICO
   const income = activeTransactions.filter(tx => tx.type === "income").reduce((acc, curr) => acc + curr.amount, 0);
@@ -350,10 +351,25 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  <span className={`font-bold ${tx.type === 'income' ? 'text-income' : ''}`}>
-                    {tx.type === 'income' ? "+ " : "- "}
-                    {formatCurrency(tx.amount)}
-                  </span>
+                    <div className="flex items-center gap-3">
+                      <span className={`font-bold ${tx.type === 'income' ? 'text-income' : ''}`}>
+                        {tx.type === 'income' ? "+ " : "- "}
+                        {formatCurrency(tx.amount)}
+                      </span>
+                      
+                      {/* Botão Editar */}
+                      {(tx.user_cpf === user?.cpf || tx.is_shared) && (
+                        <button 
+                          onClick={() => {
+                            setSelectedTx(tx);
+                            setIsModalOpen(true);
+                          }}
+                          className="p-1.5 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                      )}
+                    </div>
                 </div>
               ))
             )}
@@ -361,7 +377,14 @@ export default function Home() {
         </section>
       </div>
 
-      <TransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <TransactionModal 
+        isOpen={isModalOpen} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTx(null);
+        }} 
+        transactionToEdit={selectedTx}
+      />
     </>
   );
 }

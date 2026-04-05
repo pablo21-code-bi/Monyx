@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpCircle, ArrowDownCircle, Search, Filter, Users } from "lucide-react";
-import { useAppContext } from "@/context/AppContext";
+import { ArrowUpCircle, ArrowDownCircle, Search, Filter, Users, Pencil } from "lucide-react";
+import { useAppContext, Transaction } from "@/context/AppContext";
+import TransactionModal from "@/components/TransactionModal";
 
 export default function Registros() {
-  const { partner, activeTransactions } = useAppContext();
+  const { user, partner, activeTransactions } = useAppContext();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   
   const sortedTransactions = [...activeTransactions].sort((a, b) => {
     return new Date(b.created_at || b.date).getTime() - new Date(a.created_at || a.date).getTime();
@@ -78,10 +81,24 @@ export default function Registros() {
                 </div>
               </div>
             </div>
-            <div className="text-left sm:text-right">
+            <div className="flex items-center gap-4 text-left sm:text-right">
               <span className={`font-bold text-lg block ${tx.type === 'income' ? 'text-income' : ''}`}>
                 {tx.type === 'income' ? "+ " : "- "}{formatCurrency(tx.amount)}
               </span>
+              
+              {/* Botão Editar: Visível se for o dono ou se for compartilhada */}
+              {(tx.user_cpf === user?.cpf || tx.is_shared) && (
+                <button 
+                  onClick={() => {
+                    setSelectedTx(tx);
+                    setIsModalOpen(true);
+                  }}
+                  className="p-2 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                  title="Editar transação"
+                >
+                  <Pencil size={18} />
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -93,6 +110,15 @@ export default function Registros() {
           </div>
         )}
       </div>
+
+      <TransactionModal 
+        isOpen={isModalOpen} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTx(null);
+        }} 
+        transactionToEdit={selectedTx}
+      />
     </div>
   );
 }

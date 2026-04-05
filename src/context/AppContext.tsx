@@ -67,6 +67,8 @@ type AppContextType = {
   logout: () => Promise<void>;
   fetchTransactions: () => Promise<void>;
   addTransaction: (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">) => Promise<void>;
+  updateTransaction: (id: number, tx: Partial<Transaction>) => Promise<void>;
+  deleteTransaction: (id: number) => Promise<void>;
   fetchGoals: () => Promise<void>;
   addGoal: (goal: Omit<Goal, "id" | "user_cpf" | "created_at">) => Promise<void>;
   updateGoal: (id: number, amountToAdd: number) => Promise<void>;
@@ -283,6 +285,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       console.error("Error adding tx:", err);
     }
   };
+  
+  const updateTransaction = async (id: number, updatedInfo: Partial<Transaction>) => {
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .update(updatedInfo)
+        .eq("id", id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      // Atualiza localmente
+      setTransactions(transactions.map(t => t.id === id ? data : t));
+      
+      // Se for do parceiro (compartilhada), atualiza na lista dele também
+      if (partnerTransactions.some(t => t.id === id)) {
+        setPartnerTransactions(partnerTransactions.map(t => t.id === id ? data : t));
+      }
+    } catch (err) {
+      console.error("Error updating tx:", err);
+    }
+  };
+
+  const deleteTransaction = async (id: number) => {
+    try {
+      const { error } = await supabase.from("transactions").delete().eq("id", id);
+      if (error) throw error;
+      
+      setTransactions(transactions.filter(t => t.id !== id));
+      setPartnerTransactions(partnerTransactions.filter(t => t.id !== id));
+    } catch (err) {
+      console.error("Error deleting tx:", err);
+    }
+  };
 
   const fetchGoals = async () => {
     if (!user) return;
@@ -324,7 +361,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{ 
       user, partner, transactions, partnerTransactions, activeTransactions, goals, activeGoals, loading, 
       isCoupleView, setIsCoupleView, pendingRequests, sendPartnerRequest, acceptPartnerRequest, rejectPartnerRequest, disconnectPartner,
-      logout, fetchTransactions, addTransaction, fetchGoals, addGoal, updateGoal, fetchUserSession 
+      logout, fetchTransactions, addTransaction, updateTransaction, deleteTransaction, fetchGoals, addGoal, updateGoal, fetchUserSession 
     }}>
       {children}
     </AppContext.Provider>
