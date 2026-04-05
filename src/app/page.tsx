@@ -39,7 +39,11 @@ export default function Home() {
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-[150px] animate-pulse delay-700"></div>
           </div>
           
-          <div className="max-w-6xl mx-auto px-6 text-center space-y-8">
+          <div className="max-w-6xl mx-auto px-6 text-center space-y-8 flex flex-col items-center">
+            <div className="w-24 h-24 bg-primary text-white rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/30 animate-bounce-subtle mb-4">
+               <span className="text-5xl font-black">M</span>
+            </div>
+            
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider animate-fade-in">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-2 rounded-full bg-primary opacity-75"></span>
@@ -178,7 +182,9 @@ export default function Home() {
         <footer className="py-12 border-t border-surface-border">
           <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-2 text-primary font-bold text-xl grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">
-              <img src="/monyx-logo.png" alt="Monyx Logo" className="w-8 h-8 object-contain" />
+              <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center">
+                <span className="text-lg">M</span>
+              </div>
               Monyx
             </div>
             

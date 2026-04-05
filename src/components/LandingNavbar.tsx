@@ -6,7 +6,9 @@ export default function LandingNavbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 h-20 bg-surface/80 backdrop-blur-md border-b border-surface-border z-50 flex items-center justify-between px-6 md:px-12">
       <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight">
-        <img src="/monyx-logo.png" alt="Monyx Logo" className="w-10 h-10 object-contain" />
+        <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center">
+          <span className="text-2xl font-bold">M</span>
+        </div>
         Monyx
       </div>
       

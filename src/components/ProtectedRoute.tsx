@@ -11,16 +11,17 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const router = useRouter();
 
   const isAuthRoute = pathname === "/login" || pathname === "/cadastro";
+  const isHome = pathname === "/" || pathname === "/index.html" || pathname === "";
 
   useEffect(() => {
     if (!loading) {
-      if (!user && !isAuthRoute && pathname !== "/") {
+      if (!user && !isAuthRoute && !isHome) {
         router.push("/login");
       } else if (user && isAuthRoute) {
         router.push("/");
       }
     }
-  }, [user, loading, pathname, router, isAuthRoute]);
+  }, [user, loading, pathname, router, isAuthRoute, isHome]);
 
   if (loading) {
     return (
@@ -36,7 +37,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }
 
   // Se estiver carregado e o usuário não existe (e estiver na home, mostra a landing)
-  if (!user && pathname === "/") {
+  if (!user && isHome) {
     return <main className="flex-1 w-full h-screen overflow-y-auto">{children}</main>;
   }
 

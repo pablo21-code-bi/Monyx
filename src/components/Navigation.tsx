@@ -22,7 +22,9 @@ export default function Navigation() {
       {/* Mobile Top Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-surface/80 backdrop-blur-md border-b border-surface-border flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight">
-          <img src="/monyx-logo.png" alt="Monyx Logo" className="w-8 h-8 object-contain" />
+          <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center">
+            <span className="text-xl">M</span>
+          </div>
           Monyx
         </div>
       </div>
@@ -51,7 +53,9 @@ export default function Navigation() {
       <div className="hidden md:flex flex-col w-64 h-full bg-surface border-r border-surface-border z-50">
         <div className="h-16 flex items-center px-6 border-b border-surface-border">
           <div className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight">
-            <img src="/monyx-logo.png" alt="Monyx Logo" className="w-8 h-8 object-contain" />
+            <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center">
+              <span className="text-xl">M</span>
+            </div>
             Monyx
           </div>
         </div>
