@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-income: #10B981;
+  --color-expense: #EF4444;
+  --color-surface: #FFFFFF;
+  --color-surface-dark: #1F2937;
+  --color-background-light: #F3F4F6;
+  --color-background-dark: #111827;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  --color-text-light: #F9FAFB;
+  --color-text-light-muted: #9CA3AF;
+  
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+  --background: var(--color-background-light);
+  --foreground: var(--color-text-main);
+  --surface: var(--color-surface);
+  --surface-border: #E5E7EB;
+  --text-muted: var(--color-text-muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-background-dark);
+    --foreground: var(--color-text-light);
+    --surface: var(--color-surface-dark);
+    --surface-border: #374151;
+    --text-muted: var(--color-text-light-muted);
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilitários personalizados extras caso necessário */
+@utility glass {
+  background: rgba(var(--surface-rgb), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+}
