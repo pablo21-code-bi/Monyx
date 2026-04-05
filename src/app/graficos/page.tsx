@@ -143,7 +143,7 @@ export default function Graficos() {
                     <Tooltip 
                       cursor={{fill: '#F3F4F6'}}
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
-                      formatter={(value: number) => `R$ ${value.toFixed(2)}`}
+                      formatter={(value: any) => `R$ ${Number(value).toFixed(2)}`}
                     />
                     <Bar dataKey="income" name="Receitas" fill="#10B981" radius={[4, 4, 0, 0]} barSize={20} />
                     <Bar dataKey="expense" name="Despesas" fill="#EF4444" radius={[4, 4, 0, 0]} barSize={20} />
@@ -167,7 +167,7 @@ export default function Graficos() {
                       <PieChart>
                         <Tooltip 
                           contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
-                          formatter={(value: number) => `R$ ${value.toFixed(2)}`}
+                          formatter={(value: any) => `R$ ${Number(value).toFixed(2)}`}
                         />
                         <Pie
                           data={currentData.pie}

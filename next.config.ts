@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
+const isGithubPages = process.env.DEPLOY_ENV === 'github';
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
+  basePath: isGithubPages ? '/Monyx' : '',
+  assetPrefix: isGithubPages ? '/Monyx/' : '',
+  images: {
+     unoptimized: true
+  }
 };
 
 export default nextConfig;
