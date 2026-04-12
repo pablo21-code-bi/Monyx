@@ -102,7 +102,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setLoading(true);
+      // Só mostramos o loading global se for o carregamento inicial (sem user)
+      // ou se o usuário estiver deslogando
+      if (!user || event === "SIGNED_OUT") {
+        setLoading(true);
+      }
+      
       if (session?.user) {
         await loadUserProfile(session.user.id);
       } else {

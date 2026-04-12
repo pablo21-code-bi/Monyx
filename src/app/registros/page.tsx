@@ -9,16 +9,23 @@ export default function Registros() {
   const { user, partner, activeTransactions } = useAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterMode, setFilterMode] = useState<'all' | 'individual' | 'couple'>('all');
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   
   const sortedTransactions = [...activeTransactions].sort((a, b) => {
     return new Date(b.created_at || b.date).getTime() - new Date(a.created_at || a.date).getTime();
   });
 
-  const filtered = sortedTransactions.filter(t => 
-    t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    t.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = sortedTransactions.filter(t => {
+    const matchesSearch = t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          t.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesFilter = filterMode === 'all' || 
+                          (filterMode === 'individual' && !t.is_shared) || 
+                          (filterMode === 'couple' && t.is_shared);
+    
+    return matchesSearch && matchesFilter;
+  });
 
   const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
@@ -32,7 +39,7 @@ export default function Registros() {
       </header>
 
       {/* Toolbar: Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
             <Search size={20} />
@@ -45,10 +52,40 @@ export default function Registros() {
             className="w-full bg-surface border border-surface-border rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
           />
         </div>
-        <button className="flex items-center justify-center gap-2 bg-surface border border-surface-border rounded-xl px-6 py-3 font-semibold text-text-muted hover:text-foreground transition-colors">
-          <Filter size={20} />
-          Filtros
-        </button>
+        
+        {/* Filter Segmented Control */}
+        <div className="bg-surface border border-surface-border p-1 rounded-xl flex items-center gap-1">
+          <button 
+            onClick={() => setFilterMode('all')}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+              filterMode === 'all' 
+                ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                : 'text-text-muted hover:text-foreground'
+            }`}
+          >
+            Tudo
+          </button>
+          <button 
+            onClick={() => setFilterMode('individual')}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+              filterMode === 'individual' 
+                ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                : 'text-text-muted hover:text-foreground'
+            }`}
+          >
+            Pessoais
+          </button>
+          <button 
+            onClick={() => setFilterMode('couple')}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+              filterMode === 'couple' 
+                ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                : 'text-text-muted hover:text-foreground'
+            }`}
+          >
+            Casal
+          </button>
+        </div>
       </div>
 
       {/* Tabela/Lista de Transações */}

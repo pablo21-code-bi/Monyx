@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💎 Monyx - Organizador de Finanças Inteligente
 
-## Getting Started
+![Monyx Logo](public/monyx-logo.png)
 
-First, run the development server:
+O **Monyx** é uma aplicação moderna de gestão financeira pessoal e compartilhada, projetada para oferecer clareza, controle e simplicidade no dia a dia financeiro. Com uma interface premium e recursos avançados, o Monyx ajuda você (e seu parceiro/parceira) a conquistar metas e entender para onde seu dinheiro está indo.
 
+## 🚀 Funcionalidades Principais
+
+- **📊 Dashboard Interativo:** Visão geral instantânea de saldo, receitas e despesas com indicadores visuais claros.
+- **👩‍❤️‍👨 Modo Casal (Shared Finances):** Conecte-se com seu parceiro(a) para gerenciar despesas compartilhadas sem perder a privacidade de suas contas individuais.
+- **📈 Gráficos Dinâmicos:** Visualize sua evolução financeira através de gráficos detalhados por categoria e evolução temporal.
+- **🎯 Gestão de Metas:** Defina objetivos financeiros (ex: Viagem, Fundo de Emergência) e acompanhe o progresso em tempo real com barras de evolução.
+- **📱 Responsividade Total:** Use no desktop ou no celular com uma experiência fluida e adaptada.
+- **🔒 Segurança com Supabase:** Autenticação segura e armazenamento de dados robusto.
+
+## 🛠️ Tecnologias Utilizadas
+
+Este projeto foi construído com o que há de mais moderno no ecossistema web:
+
+- **Framework:** [Next.js 15+](https://nextjs.org/) (App Router & Turbopack)
+- **Estilização:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **Backend & Auth:** [Supabase](https://supabase.com/)
+- **Animações:** [Framer Motion](https://www.framer.com/motion/)
+- **Gráficos:** [Recharts](https://recharts.org/)
+- **Ícones:** [Lucide React](https://lucide.dev/)
+
+## 🌐 Deploy Atual
+
+O projeto está configurado para deploy contínuo no **GitHub Pages** e utiliza um domínio customizado:
+🔗 [monyxfinance.com.br](https://monyxfinance.com.br)
+
+## 🖥️ Como rodar localmente
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/monyx.git
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure as variáveis de ambiente:**
+   Crie um arquivo `.env.local` com suas chaves do Supabase:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=seu_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave
+   ```
+
+4. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+## 📦 Script de Deploy
+
+Para atualizar a versão de produção no GitHub Pages:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run deploy
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Desenvolvido com foco em UX e excelência técnica.*
