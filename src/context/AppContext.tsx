@@ -312,14 +312,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
 
       const { data, error } = await supabase.from("transactions").insert(transactionsToInsert).select();
-      if (error) throw error;
       
-      // Atualiza o estado local com os novos dados (que podem ser vários)
-      if (data) {
-        setTransactions([...data, ...transactions]);
+      if (error) {
+        console.error("Supabase Error:", error);
+        throw error;
+      }
+      
+      // Atualiza o estado local com os novos dados
+      // Se data for null (pode acontecer com RLS), forçamos um fetch completo
+      if (data && Array.isArray(data) && data.length > 0) {
+        setTransactions(prev => [...data, ...prev]);
+      } else {
+        await fetchTransactions();
       }
     } catch (err) {
-      console.error("Error adding tx:", err);
+      console.error("Error adding transactions:", err);
+      // Opcional: alert("Erro ao salvar movimentações. Verifique o console ou tente novamente.");
     }
   };
   
