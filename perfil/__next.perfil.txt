@@ -2,4 +2,4 @@
 2:I[39756,["/_next/static/chunks/0m.9e-.jwm2~o.js","/_next/static/chunks/08dqipqlo-n6w.js","/_next/static/chunks/0n4z.7yu76je-.js"],"default"]
 3:I[37457,["/_next/static/chunks/0m.9e-.jwm2~o.js","/_next/static/chunks/08dqipqlo-n6w.js","/_next/static/chunks/0n4z.7yu76je-.js"],"default"]
 4:[]
-0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"gVZTR3xJrcof9S5xIITZW"}
+0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"ErpdiAPVY_A_epdZSSv7Q"}
