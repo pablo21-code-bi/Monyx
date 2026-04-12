@@ -67,6 +67,7 @@ type AppContextType = {
   logout: () => Promise<void>;
   fetchTransactions: () => Promise<void>;
   addTransaction: (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">, options?: { installments?: number, isRecurring?: boolean }) => Promise<void>;
+  importTransactions: (txs: Omit<Transaction, "id" | "user_cpf" | "created_at">[]) => Promise<{ added: number, skipped: number }>;
   updateTransaction: (id: number, tx: Partial<Transaction>) => Promise<void>;
   deleteTransaction: (id: number) => Promise<void>;
   fetchGoals: () => Promise<void>;
@@ -330,6 +331,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // Opcional: alert("Erro ao salvar movimentações. Verifique o console ou tente novamente.");
     }
   };
+
+  const importTransactions = async (txs: Omit<Transaction, "id" | "user_cpf" | "created_at">[]) => {
+    if (!user) return { added: 0, skipped: 0 };
+    try {
+      // Filtragem de Duplicatas
+      // Critério: Mesma data, mesmo valor absoluto e título similar
+      const existingKeySet = new Set(transactions.map(t => `${t.date}_${t.amount}_${t.title}`));
+      
+      const newTxs = txs.filter(t => {
+        const key = `${t.date}_${t.amount}_${t.title}`;
+        return !existingKeySet.has(key);
+      });
+
+      const skipped = txs.length - newTxs.length;
+      if (newTxs.length === 0) return { added: 0, skipped };
+
+      const txsWithUser = newTxs.map(t => ({ ...t, user_cpf: user.cpf }));
+      const { data, error } = await supabase.from("transactions").insert(txsWithUser).select();
+      
+      if (error) throw error;
+      
+      if (data) {
+        setTransactions(prev => [...data, ...prev]);
+      }
+      
+      return { added: newTxs.length, skipped };
+    } catch (err) {
+      console.error("Error importing transactions:", err);
+      return { added: 0, skipped: 0 };
+    }
+  };
   
   const updateTransaction = async (id: number, updatedInfo: Partial<Transaction>) => {
     try {
@@ -406,7 +438,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{ 
       user, partner, transactions, partnerTransactions, activeTransactions, goals, activeGoals, loading, 
       isCoupleView, setIsCoupleView, pendingRequests, sendPartnerRequest, acceptPartnerRequest, rejectPartnerRequest, disconnectPartner,
-      logout, fetchTransactions, addTransaction, updateTransaction, deleteTransaction, fetchGoals, addGoal, updateGoal, fetchUserSession 
+      logout, fetchTransactions, addTransaction, importTransactions, updateTransaction, deleteTransaction, fetchGoals, addGoal, updateGoal, fetchUserSession 
     }}>
       {children}
     </AppContext.Provider>

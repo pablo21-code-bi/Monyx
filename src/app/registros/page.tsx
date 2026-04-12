@@ -4,11 +4,14 @@ import { useState } from "react";
 import { ArrowUpCircle, ArrowDownCircle, Search, Filter, Users, Pencil } from "lucide-react";
 import { useAppContext, Transaction } from "@/context/AppContext";
 import TransactionModal from "@/components/TransactionModal";
+import ImportModal from "@/components/ImportModal";
+import { Upload } from "lucide-react";
 
 export default function Registros() {
   const { user, partner, activeTransactions } = useAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [filterMode, setFilterMode] = useState<'all' | 'individual' | 'couple'>('all');
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   
@@ -36,6 +39,13 @@ export default function Registros() {
           <h1 className="text-3xl font-bold tracking-tight">Meus Registros</h1>
           <p className="text-text-muted text-sm mt-1">Histórico completo de transações {partner && "(Contas somadas)"}</p>
         </div>
+        <button 
+          onClick={() => setIsImportModalOpen(true)}
+          className="flex items-center justify-center gap-2 bg-surface hover:bg-surface-border/30 text-foreground border border-surface-border px-5 py-3 rounded-xl font-bold transition-all shadow-sm"
+        >
+          <Upload size={18} />
+          Importar Extrato
+        </button>
       </header>
 
       {/* Toolbar: Search and Filters */}
@@ -155,6 +165,11 @@ export default function Registros() {
           setSelectedTx(null);
         }} 
         transactionToEdit={selectedTx}
+      />
+
+      <ImportModal 
+        isOpen={isImportModalOpen} 
+        onClose={() => setIsImportModalOpen(false)} 
       />
     </div>
   );
