@@ -66,7 +66,7 @@ type AppContextType = {
 
   logout: () => Promise<void>;
   fetchTransactions: () => Promise<void>;
-  addTransaction: (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">) => Promise<void>;
+  addTransaction: (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">, options?: { installments?: number, isRecurring?: boolean }) => Promise<void>;
   updateTransaction: (id: number, tx: Partial<Transaction>) => Promise<void>;
   deleteTransaction: (id: number) => Promise<void>;
   fetchGoals: () => Promise<void>;
@@ -274,12 +274,50 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTransaction = async (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">) => {
+  const addTransaction = async (tx: Omit<Transaction, "id" | "user_cpf" | "created_at">, options?: { installments?: number, isRecurring?: boolean }) => {
     if (!user) return;
     try {
-      const { data, error } = await supabase.from("transactions").insert([{ ...tx, user_cpf: user.cpf }]).select().single();
+      let transactionsToInsert = [];
+      const baseDate = new Date(tx.date + "T12:00:00"); // Usa meio-dia para evitar problemas de fuso no setMonth
+
+      if (options?.installments && options.installments > 1) {
+        // Lógica de Parcelas
+        for (let i = 0; i < options.installments; i++) {
+          const installmentDate = new Date(baseDate);
+          installmentDate.setMonth(baseDate.getMonth() + i);
+          
+          transactionsToInsert.push({
+            ...tx,
+            user_cpf: user.cpf,
+            title: `${tx.title} (${i + 1}/${options.installments})`,
+            date: installmentDate.toISOString().split("T")[0]
+          });
+        }
+      } else if (options?.isRecurring) {
+        // Lógica de Recorrência (24 meses)
+        for (let i = 0; i < 24; i++) {
+          const recurrenceDate = new Date(baseDate);
+          recurrenceDate.setMonth(baseDate.getMonth() + i);
+          
+          transactionsToInsert.push({
+            ...tx,
+            user_cpf: user.cpf,
+            title: `${tx.title} (Recorrência ${i + 1}/24)`,
+            date: recurrenceDate.toISOString().split("T")[0]
+          });
+        }
+      } else {
+        // Única
+        transactionsToInsert.push({ ...tx, user_cpf: user.cpf });
+      }
+
+      const { data, error } = await supabase.from("transactions").insert(transactionsToInsert).select();
       if (error) throw error;
-      setTransactions([data, ...transactions]);
+      
+      // Atualiza o estado local com os novos dados (que podem ser vários)
+      if (data) {
+        setTransactions([...data, ...transactions]);
+      }
     } catch (err) {
       console.error("Error adding tx:", err);
     }

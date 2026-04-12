@@ -20,6 +20,8 @@ export default function TransactionModal({ isOpen, onClose, transactionToEdit }:
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isShared, setIsShared] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [frequency, setFrequency] = useState<"single" | "monthly" | "installment">("single");
+  const [installmentsCount, setInstallmentsCount] = useState("2");
 
   useEffect(() => {
     if (transactionToEdit) {
@@ -66,6 +68,9 @@ export default function TransactionModal({ isOpen, onClose, transactionToEdit }:
         category,
         date,
         is_shared: isShared
+      }, {
+        installments: frequency === "installment" ? parseInt(installmentsCount) : undefined,
+        isRecurring: frequency === "monthly"
       });
     }
 
@@ -198,6 +203,56 @@ export default function TransactionModal({ isOpen, onClose, transactionToEdit }:
               />
             </div>
           </div>
+
+          {/* Frequência: Única, Parcelada, Recorrente */}
+          {!transactionToEdit && (
+            <div className="pt-2">
+              <label className="block text-sm font-medium text-text-muted mb-2">Frequência</label>
+              <div className="grid grid-cols-3 gap-2">
+                 <button
+                    type="button"
+                    onClick={() => setFrequency("single")}
+                    className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${frequency === "single" ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-surface-border text-text-muted'}`}
+                 >
+                    Única
+                 </button>
+                 <button
+                    type="button"
+                    onClick={() => setFrequency("installment")}
+                    className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${frequency === "installment" ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-surface-border text-text-muted'}`}
+                 >
+                    Parcelada
+                 </button>
+                 <button
+                    type="button"
+                    onClick={() => setFrequency("monthly")}
+                    className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${frequency === "monthly" ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-surface-border text-text-muted'}`}
+                 >
+                    Recorrente
+                 </button>
+              </div>
+              
+              {frequency === "installment" && (
+                <div className="mt-3 animate-in slide-in-from-top-2 duration-200">
+                  <label className="block text-xs font-medium text-text-muted mb-1">Número de Parcelas</label>
+                  <input 
+                    type="number" 
+                    min="2" 
+                    max="360"
+                    value={installmentsCount}
+                    onChange={(e) => setInstallmentsCount(e.target.value)}
+                    className="w-full bg-background rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-primary/50 transition-all border border-surface-border font-bold"
+                  />
+                </div>
+              )}
+
+              {frequency === "monthly" && (
+                <p className="mt-2 text-[10px] text-text-muted italic flex items-center gap-1">
+                  <AlertCircle size={10} /> Será gerado automaticamente para os próximos 24 meses.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Compartilhamento de Casal (SÓ APARECE SE TIVER PARCEIRO) */}
           {partner && (
